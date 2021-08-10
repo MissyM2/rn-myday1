@@ -3,7 +3,7 @@ import * as FileSystem from 'expo-file-system';
 export const ADD_LOCATION = 'ADD_LOCATION';
 export const LOAD_LOCATIONS = 'LOAD_LOCATIONS';
 
-import { fetchLocations, insertLocation } from '../../helpers/db';
+import { fetchLocations, insertLocation } from '../../helpers/dbLocations';
 import ENV from '../../env';
 
 export const addLocation = (location) => {
