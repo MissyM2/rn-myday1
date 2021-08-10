@@ -1,18 +1,19 @@
 import React from 'react';
 import { View, Image, Text, StyleSheet, ScrollView } from 'react-native';
-import { useSelector } from 'react-redux';
+//import { useSelector } from 'react-redux';
 
 import Colors from '../constants/Colors';
 
-import MapPreview from '../components/MapPreview';
+//import MapPreview from '../components/MapPreview';
 
 const LocationDetailScreen = props => {
+  /*
   const locationId = props.navigation.getParam('locationId');
   const selectedLocation = useSelector(state => 
     state.locations.locations.find(location => location.id === locationId)
   );
 
-
+*/
  /* const selectedLoc = { lat: selectedPlace.lat, lng: selectedPlace.lng }
 
   const showMapHandler = () => {
@@ -46,7 +47,7 @@ const LocationDetailScreen = props => {
   );
 };
 
-LocationDetailScreen.navigationOptions = navData => {
+export const screenOptions = navData => {
   return {
     headerTitle: navData.navigation.getParam('locationTitle')
   };

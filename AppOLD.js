@@ -14,6 +14,18 @@ import locationsReducer from './store/reducers/locations-reducer';
 import timerReducer from './store/reducers/timer-reducer';
 
 import MyDayScreen from './screens/MyDayScreen';
+import LocationsListScreen, {
+  screenOptions as locationListScreenOptions
+} from './screens/LocationsListScreen';
+import LocationDetailScreen, {
+  screenOptions as LocationDetailScreenOptions
+} from './screens/LocationDetailScreen';
+import GetLocationScreen, {
+  screenOptions as GetLocationScreenOptions
+} from './screens/GetLocationScreen';
+import MapScreen, {
+  screenOptions as MapScreenOptions
+} from './screens/MapScreen';
 import Colors from './constants/Colors';
 
 
@@ -31,7 +43,34 @@ const fetchFonts = () => {
   });
 };
 
+const LocationsStack = createStackNavigator();
 
+function LocationsStackScreen() {
+  return (
+    <LocationsStack.Navigator>
+        <LocationsStack.Screen 
+            name="LocationsListScreen" 
+            component={LocationsListScreen}
+            options={locationListScreenOptions}
+        />
+        <LocationsStack.Screen 
+            name="LocationDetailScreen" 
+            component={LocationDetailScreen} 
+            options={LocationDetailScreenOptions}
+          />
+        <LocationsStack.Screen 
+            name="GetLocation" 
+            component={GetLocationScreen} 
+            options={GetLocationScreenOptions}
+          />
+        <LocationsStack.Screen 
+            name="Map" 
+            component={MapScreen} 
+            options={MapScreenOptions}
+        />
+      </LocationsStack.Navigator>
+  );
+}
 
 const Tab = createBottomTabNavigator();
 
@@ -58,6 +97,21 @@ function MfosTabs() {
                 />
               ),
 
+            }}
+          />
+          <Tab.Screen
+            name="Locations"
+            component={LocationsStackScreen}
+            options={{
+              tabBarLabel: 'Locations',
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons 
+                    name="bell" 
+                    color={color} 
+                    size={size} 
+                  />
+              ),
+              tabBarBadge: 0,
             }}
           />
 

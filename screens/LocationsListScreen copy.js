@@ -5,40 +5,46 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import HeaderButton from '../components/HeaderButton';
 import LocationItem from '../components/LocationItem';
-import * as locationsActions from '../store/actions/locations-actions';
+import * as locationsActions from '../store/locations-actions';
 
 const LocationsListScreen = props => {
+  /*
   const locations = useSelector(state => state.locations.locations);
 
   const dispatch = useDispatch();
-/*
+
   useEffect(() => {
     dispatch(locationsActions.loadLocations());
   }, [dispatch]);
-  */
-
+*/
   return (
-    <FlatList 
-      data={locations} 
-      keyExtractor={item => item.id} 
+    <View>
+      <Text>Missy</Text>
+    </View>
+    {/*
+    <FlatList
+      data={locations}
+      keyExtractor={item => item.id}
       renderItem={itemData => (
-        <LocationItem 
-            image={null} 
-            title={itemData.item.title} 
-            address={null} 
-            onSelect={() => {
-              props.navigation.navigate('LocationDetail', {
-                locationTitle: itemData.item.title,
-                locationId: itemData.item.id
-              });
-          }} 
+        <LocationItem
+          image={itemData.item.imageUri}
+          title={itemData.item.title}
+          address={itemData.item.address}
+          onSelect={() => {
+            props.navigation.navigate('LocationDetail', {
+              locationTitle: itemData.item.title,
+              locationId: itemData.item.id
+            });
+          }}
         />
       )}
     />
+        */}
+    
   );
 };
 
-export const screenOptions = navData => {
+export const screenOptions = navData =>{
   return {
     headerTitle: 'All Places',
     headerRight: () => (
@@ -47,7 +53,7 @@ export const screenOptions = navData => {
           title="Add Place"
           iconName={Platform.OS === 'android' ? 'md-add' : 'ios-add'}
           onPress={() => {
-            navData.navigation.navigate('GetLocation');
+            navData.navigation.navigate('NewPlace');
           }}
         />
       </HeaderButtons>

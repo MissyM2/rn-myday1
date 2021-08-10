@@ -1,4 +1,4 @@
-import { ADD_LOCATION, SET_LOCATIONS } from "../actions/mfos";
+import { ADD_LOCATION, SET_LOCATIONS } from "../actions/locations-actions";
 import location from '../../models/location';
 
 const initialState = {

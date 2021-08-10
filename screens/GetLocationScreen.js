@@ -1,22 +1,34 @@
 import React, { useState, useCallback } from 'react';
 import { 
+    ScrollView,
     View, 
     Button, 
     Text, 
-    StyleSheet
+    StyleSheet,
+    TextInput
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import Colors from '../constants/Colors';
 
-import * as locationsActions from '../store/actions/mfos';
-
+import * as locationsActions from '../store/actions/locations-actions';
+import ImgPicker from '../components/ImgPicker';
 import LocationPicker from '../components/LocationPicker';
 
 const GetLocationScreen = props => {
+    const [titleValue, setTitleValue] = useState('');
+    const [selectedImage, setSelectedImage] = useState();
     const [selectedLocation, setSelectedLocation] = useState();
 
     const dispatch = useDispatch();
+
+    const titleChangeHandler = text => {
+        setTitleValue(text);
+    };
+
+    const imageTakenHandler = imagePath => {
+        setSelectedImage(imagePath);
+    }
 
     const locationPickedHandler = useCallback(location => {
         setSelectedLocation(location);
@@ -30,11 +42,18 @@ const GetLocationScreen = props => {
     return (
         <ScrollView>
             <View style={styles.form}>
-                <Text>Get Location</Text>
+                <Text style={styles.label}>Title</Text>
+                <TextInput
+                    style={styles.textInput}
+                    onChangeText={titleChangeHandler}
+                    value={titleValue}
+                />
+                <ImgPicker onImageTaken={imageTakenHandler} />
                 <LocationPicker
                     navigation={props.navigation}
                     onLocationPicked={locationPickedHandler}
-                />
+                    />
+
                 <Button
                     title="Save Place"
                     color={Colors.primary}
@@ -42,10 +61,10 @@ const GetLocationScreen = props => {
                 />
             </View>
         </ScrollView>
-        );
+    );
 };
 
-GetLocationScreen.navigationOptions = {
+export const screenOptions =  {
     headerTitle: 'Add Location'
 };
 

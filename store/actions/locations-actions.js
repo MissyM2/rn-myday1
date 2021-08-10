@@ -1,7 +1,7 @@
 import * as FileSystem from 'expo-file-system';
 
 export const ADD_LOCATION = 'ADD_LOCATION';
-export const SET_LOCATIONS = 'SET_LOCATIONS';
+export const LOAD_LOCATIONS = 'LOAD_LOCATIONS';
 
 import { fetchLocations, insertLocation } from '../../helpers/db';
 import ENV from '../../env';
@@ -33,3 +33,7 @@ export const addLocation = (location) => {
         const newPath = FileSystem.documentDirectory + fileName;
 */
 }
+
+export const loadLocations = () => {
+    console.log('inside loadLocations');
+};

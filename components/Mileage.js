@@ -35,20 +35,21 @@ const Mileage = props => {
 };
 
 const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
+   // screen: {
+    //    flex: 1,
+    //    justifyContent: 'center',
+    //    alignItems: 'center',
+    //    borderWidth: 2
+    //},
     mileageContainer: {
-        width: '100%',
+        width: '80%',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginTop: 80,
-        marginBottom: 20,
+        //marginTop: 80,
+        //marginBottom: 20,
         padding: 10,
-        borderWidth: 2
+       // borderWidth: 2
     },
     mileageButtonContainer: {
         backgroundColor: Colors.primaryButton,
@@ -64,13 +65,13 @@ const styles = StyleSheet.create({
     mileageTextContainer1: {
         flexDirection: 'column',
         alignItems: 'center',
-        borderWidth: 2,
+        //borderWidth: 2,
         marginRight: 10
     },
     mileageTextContainer2: {
         flexDirection: 'column',
         alignItems: 'center',
-        borderWidth: 2,
+        //borderWidth: 2,
     },
     mileageText1: {
         fontFamily: 'open-sans-bold',
