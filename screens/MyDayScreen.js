@@ -1,100 +1,154 @@
 
-import React, { useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback} from "react";
 import {
     View,
     Text,
     Button,
     StyleSheet
 } from 'react-native';
-//import * as SQLite from 'expo-sqlite';
-
-import useTimer from '../hooks/useTimer';
-import { formatTime } from '../utils';
 
 import { useFocusEffect } from '@react-navigation/native';
-import moment from 'moment';
-import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import dayjs from 'dayjs';
 
-import HeaderButton from '../components/HeaderButton';
 import Mileage from '../components/Mileage';
 import Colors from '../constants/Colors';
-
-
-//const db = SQLite.openDatabase('mtbl_myday.db');
+import StartMessage from '../components/StartMessage';
+import Timer from '../components/Timer';
+import { init, insertTime, selectAllTimes, deleteAllTimes } from '../helpers/txTimer';
+import { checkTimerStatus } from "../utils/timer-utils";
 
 const MyDayScreen = () => {
-  const { timer, isActive, isPaused, handleStart, handlePause, handleResume, handleReset } = useTimer(0);
-  const todaysDate = moment().format('MMMM Do YYYY');
+  const [timerIsInitialized, setTimerIsInitialized] = useState(false);
+  const [timerIsActive, setTimerIsActive] = useState(false);
+  const [timerIsOn, setTimerIsOn] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const countRef = useRef(null);
+  const todaysDate = dayjs().format('MMMM Do YYYY');
+  const [totalElapsedTime, setTotalElapsedTime] = useState(0);
+  const [tempElapsedTime, setTempElapsedTime] = useState(0);
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(0);
+  const [testTime, setTestTime] = useState(0);
+  const [startStopDiff, setStartStopDiff] = useState(0);
 
-  useFocusEffect(
-      useCallback(() => {
-          console.log('myDay screen was focused');
-          if (timer) {
-            console.log('timer has started.  i know this because it is not 0.', timer);
-            handleResume();
-          }
-          return () => {
-              console.log('myDay screen was unfocused should pause');
-              handlePause();
-          };
-      }, [])
-  );
 
-  return (
-    <View style={styles.screen}>
-      <View style={styles.dateContainer}>
-          <Text style={styles.date}>{todaysDate}</Text>
-      </View>
-      <View>
-        <View style={styles.timeContainer}>
-          <Text>{timer}</Text>
-          <Text style={styles.time}>{formatTime(timer)}</Text>
-        </View>
-        <View>
-          {
-            !isActive && !isPaused ?
-              <Button 
-                onPress={handleStart}
-                title="Start"
-              />
-              : (
-                isPaused 
-                ? <Button 
-                    onPress={handlePause}
-                    title="Pause"
-                  />
-                : <Button 
-                    onPress={handleResume}
-                    title="Resume"
-                  />
-              )
-          }
-          <Button 
-            onPress={handleReset} 
-            disabled={!isActive}
-            title="Reset"
-          />
-        </View>
-      </View>
-      <Mileage />
-    </View>
-  );
+  useEffect(() => {
+      init();
+      setTimerIsInitialized(true);
+  },[]);
+
+  useEffect(() => {
+    //if (tempElapsedTime > 0) {
+    //  console.log('UseEffect: what is tempElapsedTime', tempElapsedTime);
+    //}
+    setTotalElapsedTime(totalElapsedTime + tempElapsedTime);
+  },[tempElapsedTime]);
+
+  useEffect(() => {
+    if (totalElapsedTime > 0) {
+      const getSeconds = `0${(totalElapsedTime % 60)}`.slice(-2);
+      const minutes = `${Math.floor(totalElapsedTime / 60)}`
+      const getMinutes = `0${minutes % 60}`.slice(-2)
+      const getHours = `0${Math.floor(totalElapsedTime / 3600)}`.slice(-2)
+    
+      let formattedTime =  `${getHours} : ${getMinutes} : ${getSeconds}`
+      console.log('formattedTime', formattedTime);
+    }
+  },[totalElapsedTime]);
+
+const checkTimerStatus = async(isOn, isActive) => {
+  let selectQuery = await selectAllTimes();
+  let mydayData = selectQuery.rows;
+  let st = 0;
+  let end = 0;
+  if (mydayData.length !== 0) {
+    for (let i = 0; i < mydayData.length; i++) {
+      let item = mydayData.item(i);
+      if (item.taskstate === 'start') {
+        st = item.timestamp;   
+      } else if (item.taskstate === 'stop') {
+        end = item.timestamp;
+        let timeDifference = end - st;
+        setTempElapsedTime(timeDifference); 
+      } else {
+         console.log('other');
+      }
+    }
+  }
 }
 
-export const screenOptions = navData =>  {
-  return { 
-      title: 'My Day',
-      headerRight: () => (
-          <HeaderButtons HeaderButtonComponent={HeaderButton}>
-          <Item
-              title="Settings"
-              iconName="ios-cog"
-              onPress={() => {}}
-          />
-          </HeaderButtons>
-      )
-  };     
+const handleStart = () => {
+    setTimerIsOn(true);
+    setTimerIsActive(true);
+    countRef.current = setInterval(() => {
+      setTimer(timer => timer + 1)
+    }, 1000);
+    insertTime('start', 6);
+};
+
+const handleStop = () => {
+  setTimerIsOn(false);
+  clearInterval(countRef.current);
+  insertTime('stop', 6);
 }
+
+const handleReset = () => {
+  setTimerIsOn(false);
+  setTimer(0);
+  clearInterval(countRef.current);
+  deleteAllTimes();
+    
+}
+
+
+
+return (
+  <View style={styles.screen}>
+          {(timerIsInitialized && !timerIsActive && !timerIsOn) 
+          ? ( 
+            <View> 
+                <StartMessage start={handleStart}/>
+            </View>
+            )
+          : (
+            <View>
+              <View style={styles.dateContainer}>
+                  <Text style={styles.date}>{todaysDate}</Text>
+              </View>
+              <View style={styles.timerContainer}>
+                  <Timer
+                    timer={timer} 
+                    stop={handleStop}
+                    start={handleStart}
+                    timerIsOn={timerIsOn}
+                  />
+              </View>
+              <View>
+                  <Button 
+                    onPress={handleReset} 
+                    title="Reset"
+                  />
+              </View>
+              <View>
+                  <Button 
+                    onPress={checkTimerStatus} 
+                    title="Check Timer Status"
+                  />
+              </View>
+              <Mileage />
+            </View>
+        )
+      }
+  </View>
+);
+
+}
+
+export const screenOptions = navData => {
+  return {
+    headerTitle: 'MyDay'
+  };
+};
 
 
 const styles = StyleSheet.create({
@@ -112,10 +166,8 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color: Colors.primaryGray,
     },
-    timeContainer: {
-      alignItems: 'center',
-      marginTop: 20,
-      borderWidth: 2
+    timerContainer: {
+      alignItems: 'center'
     },
     time: {
         fontFamily: 'open-sans',

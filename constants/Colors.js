@@ -4,5 +4,6 @@ export default {
     primaryButton: 'rgb(55, 96, 146)',
     primaryLight: 'white',
     primaryOrange: 'orange',
-    primaryYellow: 'yellow'
+    primaryYellow: 'yellow',
+    primaryBlue: 'lightblue'
 };
